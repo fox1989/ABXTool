@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="gb2312"?>
+<ArrayOfFileData xmlns:v="1">
+  <FileData>
+    <id>0</id>
+    <fileName>Plane</fileName>
+  </FileData>
+  <FileData>
+    <id>1</id>
+    <fileName>Capsule</fileName>
+  </FileData>
+  <FileData>
+    <id>2</id>
+    <fileName>Cylinder</fileName>
+  </FileData>
+  <FileData>
+    <id>3</id>
+    <fileName>Cube</fileName>
+  </FileData>
+</ArrayOfFileData>

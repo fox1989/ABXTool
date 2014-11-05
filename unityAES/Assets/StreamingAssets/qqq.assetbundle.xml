@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="gb2312"?>
+<ArrayOfData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Data>
+    <id>0</id>
+    <fileName>Plane</fileName>
+  </Data>
+  <Data>
+    <id>1</id>
+    <fileName>Capsule</fileName>
+  </Data>
+  <Data>
+    <id>2</id>
+    <fileName>Cylinder</fileName>
+  </Data>
+  <Data>
+    <id>3</id>
+    <fileName>Cube</fileName>
+  </Data>
+</ArrayOfData>
