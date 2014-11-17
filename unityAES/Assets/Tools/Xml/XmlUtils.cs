@@ -18,7 +18,7 @@ public class XmlUtils
     /// 默认路径
     /// </summary>
     ///    //不同平台下persistentDataPath的路径是不同的，这里需要注意一下。
-    private static string defalutPath  =
+    private static string defalutPath =
 #if UNITY_ANDROID   //安卓
  UnityEngine.Application.persistentDataPath + "/";
 
@@ -32,9 +32,9 @@ public class XmlUtils
     public static string DefalutPath
     {
         get { return XmlUtils.defalutPath; }
-        
+
     }
-    
+
     public static string path = DefalutPath;
 
 
@@ -87,7 +87,7 @@ public class XmlUtils
             xmlNameSpaces.Add("v", version);
             xmlNameSpaces.Add("multiple", isMultiple.ToString());
             XmlSerializer serializer = new XmlSerializer(obj.GetType());
-            serializer.Serialize(fs, obj,xmlNameSpaces);
+            serializer.Serialize(fs, obj, xmlNameSpaces);
 
         }
         catch (Exception ex)
@@ -100,7 +100,7 @@ public class XmlUtils
         }
     }
 
-  
+
 
 
 
@@ -196,7 +196,7 @@ public class XmlUtils
         finally
         {
             if (fs != null) fs.Close();
-          
+
         }
     }
 
@@ -344,7 +344,7 @@ public class XmlUtils
     /// <typeparam name="T">类型</typeparam>
     /// <param name="fileName">文件名</param>
     /// <returns></returns>
-    public static T AESLoad<T>(string fileName, out string version,out bool isMultiple)
+    public static T AESLoad<T>(string fileName, out string version, out bool isMultiple)
     {
         FileStream fs = null;
         try
@@ -405,9 +405,10 @@ public class XmlUtils
     /// <returns></returns>
     public static T AESLoadByStreamingAssetsPath<T>(string fileName)
     {
-        string streamingAssetsPath =
+        string streamingAssetsPath = "";
+        streamingAssetsPath=
 #if UNITY_EDITOR
- "file://" + UnityEngine.Application.dataPath + "/StreamingAssets" + "/";
+ "file:///" + UnityEngine.Application.dataPath + "/StreamingAssets" + "/";
 #elif UNITY_IPHONE
           UnityEngine.Application.dataPath +"/Raw"+"/";
 #elif UNITY_ANDROID
@@ -440,9 +441,49 @@ public class XmlUtils
 
     }
 
+    /// <summary>
+    /// 从StreamingAssetsPath加载加密xml
+    /// </summary>
+    /// <typeparam name="T">模型</typeparam>
+    /// <param name="fileName">文件名</param>
+    /// <returns></returns>
+    public static T LoadByStreamingAssetsPath<T>(string fileName)
+    {
+        string streamingAssetsPath = "";
+        streamingAssetsPath =
+#if UNITY_EDITOR
+ "file:///" + UnityEngine.Application.dataPath + "/StreamingAssets" + "/";
+#elif UNITY_IPHONE
+          UnityEngine.Application.dataPath +"/Raw"+"/";
+#elif UNITY_ANDROID
+        UnityEngine.Application.streamingAssetsPath+"/";
+#endif
 
+        streamingAssetsPath += (fileName + ".xml");
 
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            UnityEngine.WWW www = new UnityEngine.WWW(streamingAssetsPath);
+            while (!www.isDone)
+            {
+            }
 
+            byte[] readArr = www.bytes;
+            //byte[] reArr = AES.AESDecrypt(readArr);
+            using (MemoryStream ms = new MemoryStream(readArr))
+            {
+                return (T)serializer.Deserialize(ms);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+
+        }
+
+    }
 
 
     /// <summary>

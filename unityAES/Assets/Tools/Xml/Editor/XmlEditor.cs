@@ -31,7 +31,8 @@ public class XmlEditor
         List<string> pathList = new List<string>();
         foreach (Object o in selection)
         {
-            path = AssetDatabase.GetAssetPath(o).Replace("Assets", Application.dataPath);
+            string tempPath = AssetDatabase.GetAssetPath(o);
+            path = Application.dataPath + tempPath.Substring(tempPath.IndexOf("/"));
             pathList.Add(path);
            Debug.Log(path);
         }
