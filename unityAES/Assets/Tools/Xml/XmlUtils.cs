@@ -18,7 +18,7 @@ public class XmlUtils
     /// 默认路径
     /// </summary>
     ///    //不同平台下persistentDataPath的路径是不同的，这里需要注意一下。
-    private static string defalutPath =
+    private static string defalutPath  =
 #if UNITY_ANDROID   //安卓
  UnityEngine.Application.persistentDataPath + "/";
 
@@ -32,9 +32,9 @@ public class XmlUtils
     public static string DefalutPath
     {
         get { return XmlUtils.defalutPath; }
-
+        
     }
-
+    
     public static string path = DefalutPath;
 
 
@@ -58,8 +58,9 @@ public class XmlUtils
             fs = new FileStream(path + fileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
 
             XmlSerializer serializer = new XmlSerializer(obj.GetType());
-            serializer.Serialize(fs, obj);
-
+            XmlWriterSettings xmlWriterSetting = new XmlWriterSettings();
+            xmlWriterSetting.Encoding = Encoding.UTF8;
+            serializer.Serialize(XmlWriter.Create(fs,xmlWriterSetting), obj);
         }
         catch (Exception ex)
         {
@@ -86,9 +87,14 @@ public class XmlUtils
             XmlSerializerNamespaces xmlNameSpaces = new XmlSerializerNamespaces();
             xmlNameSpaces.Add("v", version);
             xmlNameSpaces.Add("multiple", isMultiple.ToString());
-            XmlSerializer serializer = new XmlSerializer(obj.GetType());
-            serializer.Serialize(fs, obj, xmlNameSpaces);
 
+            XmlSerializer serializer = new XmlSerializer(obj.GetType());
+            XmlWriterSettings xmlWriterSetting = new XmlWriterSettings();
+            xmlWriterSetting.Encoding = Encoding.UTF8;
+            serializer.Serialize(XmlWriter.Create(fs, xmlWriterSetting), obj, xmlNameSpaces);
+          //  serializer.Serialize()
+           // XmlSerializer serializer = new XmlSerializer(obj.GetType());
+           // serializer.Serialize(fs, obj,xmlNameSpaces);
         }
         catch (Exception ex)
         {
@@ -100,7 +106,7 @@ public class XmlUtils
         }
     }
 
-
+  
 
 
 
@@ -196,7 +202,7 @@ public class XmlUtils
         finally
         {
             if (fs != null) fs.Close();
-
+          
         }
     }
 
@@ -344,7 +350,7 @@ public class XmlUtils
     /// <typeparam name="T">类型</typeparam>
     /// <param name="fileName">文件名</param>
     /// <returns></returns>
-    public static T AESLoad<T>(string fileName, out string version, out bool isMultiple)
+    public static T AESLoad<T>(string fileName, out string version,out bool isMultiple)
     {
         FileStream fs = null;
         try
@@ -405,10 +411,9 @@ public class XmlUtils
     /// <returns></returns>
     public static T AESLoadByStreamingAssetsPath<T>(string fileName)
     {
-        string streamingAssetsPath = "";
-        streamingAssetsPath=
+        string streamingAssetsPath =
 #if UNITY_EDITOR
- "file:///" + UnityEngine.Application.dataPath + "/StreamingAssets" + "/";
+ "file://" + UnityEngine.Application.dataPath + "/StreamingAssets" + "/";
 #elif UNITY_IPHONE
           UnityEngine.Application.dataPath +"/Raw"+"/";
 #elif UNITY_ANDROID
@@ -440,6 +445,30 @@ public class XmlUtils
         }
 
     }
+
+
+    /// <summary>
+    /// 从StreamingAssetsPath加载加密xml
+    /// </summary>
+    /// <typeparam name="T">类型</typeparam>
+    /// <param name="fileName">文件名</param>
+    /// <param name="b">monobehaviour</param>
+    /// <param name="action">回调方法</param>
+    public static void AESLoadByStreamingAssetsPath<T>(string fileName, UnityEngine.MonoBehaviour b, Action<T> action)
+    {
+        string streamingAssetsPath =
+#if UNITY_EDITOR
+ "file://" + UnityEngine.Application.dataPath + "/StreamingAssets" + "/";
+#elif UNITY_IPHONE
+          UnityEngine.Application.dataPath +"/Raw"+"/";
+#elif UNITY_ANDROID
+        UnityEngine.Application.streamingAssetsPath+"/";
+#endif
+
+        streamingAssetsPath += (fileName + ".xml");
+        b.StartCoroutine_Auto(AESLoadData<T>(streamingAssetsPath, action));
+    }
+
 
     /// <summary>
     /// 从StreamingAssetsPath加载加密xml
@@ -474,7 +503,6 @@ public class XmlUtils
             using (MemoryStream ms = new MemoryStream(readArr))
             {
                 return (T)serializer.Deserialize(ms);
-
             }
         }
         catch (Exception ex)
@@ -484,6 +512,92 @@ public class XmlUtils
         }
 
     }
+
+    /// <summary>
+    /// 从StreamingAssetsPath加载加密xml
+    /// </summary>
+    /// <typeparam name="T">类型</typeparam>
+    /// <param name="fileName">文件名</param>
+    /// <param name="b">monobehaviour</param>
+    /// <param name="action">回调方法</param>
+    public static void LoadByStreamingAssetsPath<T>(string fileName, UnityEngine.MonoBehaviour b, Action<T> action)
+    {
+        string streamingAssetsPath =
+#if UNITY_EDITOR
+ "file://" + UnityEngine.Application.dataPath + "/StreamingAssets" + "/";
+#elif UNITY_IPHONE
+          UnityEngine.Application.dataPath +"/Raw"+"/";
+#elif UNITY_ANDROID
+        UnityEngine.Application.streamingAssetsPath+"/";
+#endif
+
+        streamingAssetsPath += (fileName + ".xml");
+        b.StartCoroutine_Auto(LoadData<T>(streamingAssetsPath, action));
+ 
+    }
+
+    /// <summary>
+    /// 从aessets中加载xml 协程
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="fileName"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static IEnumerator LoadData<T>(string relativePath, Action<T> action)
+    {
+        UnityEngine.WWW www = new UnityEngine.WWW(relativePath);
+        yield return www;
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+
+
+            byte[] readArr = www.bytes;
+            //byte[] reArr = AES.AESDecrypt(readArr);
+            using (MemoryStream ms = new MemoryStream(readArr))
+            {
+                action((T)serializer.Deserialize(ms));
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+
+        }
+    }
+
+
+    /// <summary>
+    /// 从aessets中加载加密的xml 协程
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="fileName"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static IEnumerator AESLoadData<T>(string relativePath,Action<T> action)
+    {
+
+        UnityEngine.WWW www = new UnityEngine.WWW(relativePath);
+        yield return www;
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+
+            byte[] readArr = www.bytes;
+            byte[] reArr = AES.AESDecrypt(readArr);
+            using (MemoryStream ms = new MemoryStream(readArr))
+            {
+                action((T)serializer.Deserialize(ms));
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+
+        }
+    }
+
+
 
 
     /// <summary>

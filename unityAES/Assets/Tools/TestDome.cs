@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Serialization;
+using System.IO;
+
 
 public class TestDome : MonoBehaviour
 {
-   
+
 
     //打印信息
     public string info = "";
@@ -12,11 +15,14 @@ public class TestDome : MonoBehaviour
     void Start()
     {
 
-        AssetBundleDownload download = new AssetBundleDownload("test1", "http://192.168.50.24");
+        AssetBundleDownload download = new AssetBundleDownload("test1", "http://192.168.50.26");
         download.OnFinishDownload += DownldFinish;
+        download.OnError += Error;
         download.StartDownload(this);
-        AssetBundleDownload download1 = new AssetBundleDownload("test2", "http://192.168.50.24");
-        download1.StartDownload(this);
+       // AssetBundleDownload download1 = new AssetBundleDownload("test2", "http://192.168.50.26");
+     // download1.StartDownload(this);
+        info = "ddd";
+        //  List<FileData> list = XmlUtils.Load<List<FileData>>("test1");
     }
 
     /// <summary>
@@ -25,9 +31,10 @@ public class TestDome : MonoBehaviour
     /// <param name="fileName"></param>
     /// <param name="success"></param>
     /// <param name="info"></param>
-    private void Loaded(string fileName, bool success, string info)
+    private void Loaded(string fileName, bool success, string infov)
     {
-        print("fileName:" + fileName + "   resName:" +success.ToString()+ "   version:" + info);
+        info += ("fileName:" + fileName + "   resName:" + success.ToString() + "   version:" + infov);
+        print("fileName:" + fileName + "   resName:" + success.ToString() + "   version:" + infov);
         //info += resName;
     }
 
@@ -38,18 +45,22 @@ public class TestDome : MonoBehaviour
     }
 
 
-
     void OnGUI()
     {
-        if (GUI.Button(new Rect(0, 0, 100, 50), "打印"))
+        if (GUI.Button(new Rect(0, 0, 100, 50), "Ping"))
         {
-            info += "path:" + Application.persistentDataPath;
+            Ping ping = new Ping("192.168.50.26");
+        while(!ping.isDone)
+        {}
+            info += ping.time+ping.isDone.ToString();
+        
+            //info += "path:" + Application.persistentDataPath;
 
-            Player[] list = XmlUtils.AESLoad<Player[]>("myPlay");
-            foreach (Player p in list)
-            {
-                info += ("name:" + p.name + " level: " + p.level + "  att1:" + p.att1);
-            }
+            //Player[] list = XmlUtils.AESLoad<Player[]>("myPlay");
+            //foreach (Player p in list)
+            //{
+            //    info += ("name:" + p.name + " level: " + p.level + "  att1:" + p.att1);
+            //}
 
         }
 
@@ -69,8 +80,8 @@ public class TestDome : MonoBehaviour
                 list[i] = p;
 
             }
-            XmlUtils.AESSave("myPlay", list);
-           
+            XmlUtils.Save("myPlay", list);
+
 
         }
 
@@ -85,15 +96,56 @@ public class TestDome : MonoBehaviour
 
         }
 
-        if (GUI.Button(new Rect(300, 0, 100, 50), "打印asset"))
+        if (GUI.Button(new Rect(300, 0, 100, 50), "打印AESasset"))
         {
-           info += "path:" + Application.streamingAssetsPath;
+            info += "path:" + Application.streamingAssetsPath;
 
             Player[] list = XmlUtils.AESLoadByStreamingAssetsPath<Player[]>("player");
             foreach (Player p in list)
             {
                 info += ("name:" + p.name + " level: " + p.level + "  att1:" + p.att1);
             }
+
+        }
+
+        if (GUI.Button(new Rect(400, 0, 100, 50), "打印asset"))
+        {
+            //info += "path:" + Application.streamingAssetsPath;
+
+            // List<FileData> list = XmlUtils.LoadByStreamingAssetsPath<List<FileData>>("test1");
+            // XmlUtils.path = Application.streamingAssetsPath + "/";
+            //List<FileData> list = XmlUtils.Load<List<FileData>>("test1");
+            //foreach (FileData p in list)
+            //{
+            //    info += ("name:" +p.fileName+ ",,");
+            //}
+
+
+            //FileStream fs = new FileStream(filePath, FileMode.Open);
+            //StreamReader m_streamReader = new StreamReader(fs, Encoding.UTF8);
+            //string str = m_streamReader.ReadToEnd();
+            //if (fileStringsDic.ContainsKey(filePath))
+            //    fileStringsDic[filePath] = str;
+            //else
+            //    fileStringsDic.Add(filePath, str);
+            //m_streamReader.Close();
+            //m_streamReader.Dispose();
+
+
+            //info += list[1].fileName;
+            info += ("startTime:" + System.DateTime.Now.ToString() + ":" + System.DateTime.Now.Millisecond.ToString());
+            //Object o = Resources.Load("test1");
+            //TextAsset t = o as TextAsset;
+            //XmlSerializer xmls = new XmlSerializer(typeof(List<FileData>));
+            //using (MemoryStream ms = new MemoryStream(t.bytes))
+            //{
+            //    List<FileData> list = (List<FileData>)xmls.Deserialize(ms);
+            //    info += list[0].fileName;
+            //}
+            Player[] list = XmlUtils.AESLoadByStreamingAssetsPath<Player[]>("player");
+            info += list[2].name;
+
+            info += ("endTime:" + System.DateTime.Now.ToString() + ":" + System.DateTime.Now.Millisecond.ToString());
 
         }
 
@@ -105,10 +157,16 @@ public class TestDome : MonoBehaviour
 
     public void DownldFinish(string v, int i)
     {
-        print(v +"   "+ i);
-        ABS.debug = false; 
+        info += v + "   " + i;
+        print(v + "   " + i);
+        ABS.debug = false;
         ABS.OnLoaded += Loaded;
         ABS.StartLoadRes("test1", this);
-      
+
+    }
+
+    public void Error(string value, int num)
+    {
+        info += value;
     }
 }

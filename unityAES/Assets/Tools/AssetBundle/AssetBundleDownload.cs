@@ -37,6 +37,7 @@ public class AssetBundleDownload
    public void StartDownload(MonoBehaviour b)
     {
         this.b = b;
+        Debug.Log("start-----download");
         b.StartCoroutine(GetVersion());
     }
 
@@ -49,6 +50,7 @@ public class AssetBundleDownload
     {
         WWW www = new WWW(serverPath + "/" + xmlName + ".xml");
         yield return www;
+        Debug.Log("start-----GetVersion");
 
         //如果出错
         if (www.error != null)
@@ -74,12 +76,19 @@ public class AssetBundleDownload
             serverIsMultiple = Convert.ToBoolean(versionElem.GetAttribute("xmlns:multiple"));
             //返回
             ms.Position = 0;
+          
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<FileData>));
             List<FileData> serverList = (List<FileData>)xmlSerializer.Deserialize(ms);
             string localVersion = "";
           
             List<FileData> localList = new List<FileData>();
+            if (!Directory.Exists(Application.persistentDataPath + "/Data"))
+            {
+                Directory.CreateDirectory(Application.persistentDataPath + "/Data");
+            }
 
+
+            string strPathtest = Application.persistentDataPath + "/Data/" + xmlName + ".xml";
             if (File.Exists(Application.persistentDataPath + "/Data/" + xmlName + ".xml"))
             {
                 localList = XmlUtils.Load<List<FileData>>("Data/"+xmlName, out localVersion, out localIsMultiple);
@@ -135,13 +144,21 @@ public class AssetBundleDownload
 
     void DownloadNewDeleteOld(List<FileData> list,string version,bool isMultiple)
     {
+        Debug.Log("start-----DownloadNewDeleteOld");
+
         string localPath = Application.persistentDataPath + "/Data";
         //删除本地xml
-        File.Delete(localPath + "/" + xmlName + ".xml");
+        if (File.Exists(localPath + "/" + xmlName + ".xml"))
+        {
+            File.Delete(localPath + "/" + xmlName + ".xml");
+        }
         //删除文件
         foreach (FileData d in list)
         {
-            File.Delete(localPath + "/" + d.fileName + ".assetbundle");
+            if (File.Exists(localPath + "/" + d.fileName + ".assetbundle"))
+            {
+                File.Delete(localPath + "/" + d.fileName + ".assetbundle");
+            }
         }
 
         //写入xml
@@ -169,6 +186,8 @@ public class AssetBundleDownload
     }
     IEnumerator DownloadFile(string fileName)
     {
+        Debug.Log("start-----DownloadFile:" + fileName);
+
         string assetBundleName = fileName + ".assetbundle";
         WWW www = new WWW(serverPath + "/" + assetBundleName);
 
