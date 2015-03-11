@@ -16,3 +16,12 @@ E:\Wrok\unityAES\obj\Debug\Assembly-CSharp.dll
 E:\Wrok\unityAES\obj\Debug\Assembly-CSharp.pdb
 E:\Wrok\unityAES\Temp\UnityVS_bin\Debug\UnityEngine.xml
 E:\Wrok\unityAES\Temp\UnityVS_bin\Debug\UnityEditor.xml
+C:\Users\pc\Documents\GitHub\ABXTool\unityAES\Temp\UnityVS_bin\Debug\Assembly-CSharp.dll
+C:\Users\pc\Documents\GitHub\ABXTool\unityAES\Temp\UnityVS_bin\Debug\Assembly-CSharp.pdb
+C:\Users\pc\Documents\GitHub\ABXTool\unityAES\Temp\UnityVS_bin\Debug\UnityEditor.dll
+C:\Users\pc\Documents\GitHub\ABXTool\unityAES\Temp\UnityVS_bin\Debug\UnityEngine.dll
+C:\Users\pc\Documents\GitHub\ABXTool\unityAES\Temp\UnityVS_bin\Debug\UnityEngine.xml
+C:\Users\pc\Documents\GitHub\ABXTool\unityAES\Temp\UnityVS_bin\Debug\UnityEditor.xml
+C:\Users\pc\Documents\GitHub\ABXTool\unityAES\obj\Debug\UnityVS.unityAES.CSharp.csprojResolveAssemblyReference.cache
+C:\Users\pc\Documents\GitHub\ABXTool\unityAES\obj\Debug\Assembly-CSharp.dll
+C:\Users\pc\Documents\GitHub\ABXTool\unityAES\obj\Debug\Assembly-CSharp.pdb

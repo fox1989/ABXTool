@@ -19,8 +19,8 @@ public class TestDome : MonoBehaviour
         download.OnFinishDownload += DownldFinish;
         download.OnError += Error;
         download.StartDownload(this);
-       // AssetBundleDownload download1 = new AssetBundleDownload("test2", "http://192.168.50.26");
-     // download1.StartDownload(this);
+        // AssetBundleDownload download1 = new AssetBundleDownload("test2", "http://192.168.50.26");
+        // download1.StartDownload(this);
         info = "ddd";
         //  List<FileData> list = XmlUtils.Load<List<FileData>>("test1");
     }
@@ -50,10 +50,10 @@ public class TestDome : MonoBehaviour
         if (GUI.Button(new Rect(0, 0, 100, 50), "Ping"))
         {
             Ping ping = new Ping("192.168.50.26");
-        while(!ping.isDone)
-        {}
-            info += ping.time+ping.isDone.ToString();
-        
+            while (!ping.isDone)
+            { }
+            info += ping.time + ping.isDone.ToString();
+
             //info += "path:" + Application.persistentDataPath;
 
             //Player[] list = XmlUtils.AESLoad<Player[]>("myPlay");
@@ -149,6 +149,20 @@ public class TestDome : MonoBehaviour
 
         }
 
+        if (GUI.Button(new Rect(500, 0, 100, 50), "同步asset加载"))
+        {
+            AssetBundle ab = ABS.SynLoadRes("Cube");
+            GameObject go = (GameObject)ab.Load("Cube");
+            if (go != null)
+            {
+                float x = Random.Range(-4f, 4f);
+                float y = Random.Range(-4f, 4f);
+                float z = Random.Range(-4f, 4f);
+                Instantiate(go, new Vector3(x, y, z), Quaternion.identity);
+            }
+        }
+
+
         GUI.Label(new Rect(100, 50, 100, 700), info);
     }
 
@@ -169,4 +183,6 @@ public class TestDome : MonoBehaviour
     {
         info += value;
     }
+
+
 }

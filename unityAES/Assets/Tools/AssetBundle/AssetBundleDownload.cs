@@ -74,7 +74,7 @@ public class AssetBundleDownload
             //得到服务器版号
             string serverVersion = versionElem.GetAttribute("xmlns:v");
             serverIsMultiple = Convert.ToBoolean(versionElem.GetAttribute("xmlns:multiple"));
-            //返回
+            //返回到0项
             ms.Position = 0;
           
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<FileData>));
@@ -212,12 +212,16 @@ public class AssetBundleDownload
 
     }
 
+   private static object o = new object();
 
 
     void Finish(string value, int i)
     {
         Debug.Log(value);
-        tempNum++;
+        lock (o)
+        {
+            tempNum++;
+        }
         if (tempNum == total)
         {
             if (OnFinishDownload != null)

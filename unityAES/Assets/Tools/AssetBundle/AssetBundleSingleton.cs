@@ -2,16 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
+using System.IO;
 
-public class ABS 
+public class ABS:MonoBehaviour
 {
-    public delegate void LoadedEvent(string fileName, bool success,string info);
+    public delegate void LoadedEvent(string fileName, bool success, string info);
     public static LoadedEvent OnLoaded;
     public static List<AssetBundle> assetBundleList = new List<AssetBundle>();
+    /// <summary>
+    /// 文件名列表
+    /// </summary>
+    public static List<FileData> fileDataList = null;
 
-
-
-    public AssetBundle assetBundle;
+    // public AssetBundle assetBundle;
 
 
     public int total = 0;
@@ -32,13 +36,27 @@ public class ABS
         ABS abs = new ABS();
 
         string version = "0";
-        bool isMultiple=false;
-        List<FileData> list= XmlUtils.Load<List<FileData>>("Data/"+fileName, out version, out isMultiple);
+        bool isMultiple = false;
+        List<FileData> list = XmlUtils.Load<List<FileData>>("Data/" + fileName, out version, out isMultiple);
+
+        //加入文件名列表 
+        foreach (FileData fd in list)
+        {
+
+            FileData fd1 = fileDataList.Where(a => a.fileName == fd.fileName).FirstOrDefault();
+            if (fd1 != null)
+            {
+                fileDataList.Remove(fd1);
+            }
+            fileDataList.Add(fd);
+        }
+
+
         if (list.Count <= 0)
         {
             if (OnLoaded != null)
             {
-                OnLoaded(fileName,false,"加载失败，没有找到配置文件");
+                OnLoaded(fileName, false, "加载失败，没有找到配置文件");
             }
         }
         else
@@ -57,8 +75,9 @@ public class ABS
             }
         }
 
-       
+
     }
+
 
 
     /// <summary>
@@ -89,7 +108,7 @@ public class ABS
     /// <param name="fileName"></param>
     /// <param name="resName"></param>
     /// <returns></returns>
-    public static UnityEngine.Object GetRes(string fileName,string resName)
+    public static UnityEngine.Object GetRes(string fileName, string resName)
     {
         if (debug)
         {
@@ -107,27 +126,27 @@ public class ABS
     }
 
 
+    private static object o = new object();
 
-
-  public IEnumerator LoadRes(string fileName)
+    public IEnumerator LoadRes(string fileName)
     {
-      
-       
+
+
         if (!debug)
         {
             string path =
-        #if UNITY_EDITOR
-               "file:///" + UnityEngine.Application.persistentDataPath ;
-        #elif UNITY_IPHONE
+#if UNITY_EDITOR
+ "file:///" + UnityEngine.Application.persistentDataPath;
+#elif UNITY_IPHONE
               "file:///"+ Application.persistentDataPath;
-        #elif UNITY_ANDROID
+#elif UNITY_ANDROID
                "file:///"+ Application.persistentDataPath;
    
-        #endif
+#endif
             path += "/Data/";
             path += fileName;
-           
-            WWW www = new WWW(path  + ".assetbundle");
+
+            WWW www = new WWW(path + ".assetbundle");
             // UnityEngine.Application.persistentDataPath
             yield return www;
             TextAsset txt = www.assetBundle.Load(fileName, typeof(TextAsset)) as TextAsset;
@@ -137,22 +156,58 @@ public class ABS
             //创建资源
             AssetBundleCreateRequest acr = AssetBundle.CreateFromMemory(newdata);
             yield return acr;
-            assetBundle = acr.assetBundle;
+            AssetBundle assetBundle = acr.assetBundle;
             assetBundle.name = fileName;
             ABS.assetBundleList.Add(assetBundle);
+            //www.assetBundle.Unload(false);
             //加载完成事件
-            tempNum++;
+            lock (o)//加锁
+            {
+                tempNum++;
+            }
+
             if (tempNum == total)
             {
                 if (OnLoaded != null)
                 {
-                    OnLoaded(fileName,true,"加载成功了");
+                    OnLoaded(fileName, true, "加载成功了");
                 }
             }
         }
     }
+    /// <summary>
+    /// 同步加载 ------????
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <returns></returns>
+    public static AssetBundle SynLoadRes(string fileName)
+    {
+        string path =
+#if UNITY_EDITOR
+ "file:///" + UnityEngine.Application.persistentDataPath;
+#elif UNITY_IPHONE
+                          "file:///"+ Application.persistentDataPath;
+#elif UNITY_ANDROID
+                           "file:///"+ Application.persistentDataPath;
+   
+#endif
 
+        path += "/Data/";
+        path += fileName;
+      
 
+        WWW www = new WWW(path + ".assetbundle");
+       // TextAsset txt = www.assetBundle.Load(fileName, typeof(TextAsset)) as TextAsset;
+       // byte[] data = txt.bytes;
+      //  byte[] newArr = AES.AESDecrypt(data);
+       /// AssetBundleCreateRequest acr = AssetBundle.CreateFromMemory(newArr);
+       // AssetBundle assetBundle = acr.assetBundle;
+       // assetBundle.name = fileName;
+       // ABS.assetBundleList.Add(assetBundle);
+
+       // return assetBundle;
+        return www.assetBundle;
+    }
 
 
     /// <summary>
@@ -160,17 +215,19 @@ public class ABS
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-  public static AssetBundle GetAssetBundleByName(string name)
-  {
-      foreach (AssetBundle a in assetBundleList)
-      {
-          if (a.name == name)
-          {
-              return a;
-          }
-      }
-      return null;
-  }
+    public static AssetBundle GetAssetBundleByName(string name)
+    {
+        AssetBundle reAssetBundle = null;
+        //缓存中找
+        foreach (AssetBundle a in assetBundleList)
+        {
+            if (a.name == name)
+            {
+                reAssetBundle = a;
+            }
+        }
+        return null;
+    }
 
 
 

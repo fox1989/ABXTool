@@ -152,20 +152,20 @@ public class AssetBundleEditor
 
                 byte[] newBuff = GetBytesByFileStream(fs);
                 fs.Close();
-                File.Delete(path);
-                string BinPath = path.Substring(0, path.LastIndexOf('.')) + ".bytes";
-                FileStream cfs = new FileStream(BinPath, FileMode.Create);
-                cfs.Write(newBuff, 0, newBuff.Length);
-                newBuff = null;
-                cfs.Close();
-                 string localPath = BinPath.Substring(BinPath.IndexOf("Assets"));
-                //重新打包
-                Debug.Log(localPath);
-                //刷新资源
-                AssetDatabase.Refresh();
-                Object t = AssetDatabase.LoadMainAssetAtPath(localPath);
-                BuildPipeline.BuildAssetBundle(t, null, path, BuildAssetBundleOptions.CompleteAssets | BuildAssetBundleOptions.CollectDependencies, BuildTarget.Android);
-                File.Delete(BinPath);
+                //File.Delete(path);
+                //string BinPath = path.Substring(0, path.LastIndexOf('.')) + ".bytes";
+                //FileStream cfs = new FileStream(BinPath, FileMode.Create);
+                //cfs.Write(newBuff, 0, newBuff.Length);
+                //newBuff = null;
+                //cfs.Close();
+                // string localPath = BinPath.Substring(BinPath.IndexOf("Assets"));
+                ////重新打包
+                //Debug.Log(localPath);
+                ////刷新资源
+                //AssetDatabase.Refresh();
+                //Object t = AssetDatabase.LoadMainAssetAtPath(localPath);
+                //BuildPipeline.BuildAssetBundle(t, null, path, BuildAssetBundleOptions.CompleteAssets | BuildAssetBundleOptions.CollectDependencies, BuildTarget.Android);
+                //File.Delete(BinPath);
 
         }
     }

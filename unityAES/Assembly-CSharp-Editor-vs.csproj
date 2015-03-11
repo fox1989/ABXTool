@@ -49,17 +49,20 @@
      <Compile Include="Assets\Tools\AssetBundle\Editor\AssetBundleEditor.cs" />
      <Compile Include="Assets\Tools\AssetBundle\Editor\AssetBundleWindon.cs" />
      <Compile Include="Assets\Tools\Xml\Editor\XmlEditor.cs" />
+     <None Include="Assets\StreamingAssets\player.xml" />
+     <None Include="Assets\StreamingAssets\test.xml" />
      <None Include="Assets\test\test1.xml" />
      <None Include="Assets\Tools\Readme.txt" />
+     <None Include="Assets\StreamingAssets\qqq.assetbundle.xml" />
      <None Include="Assets\Tools\player.xml" />
  <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
- <HintPath>E:/Wrok/unityAES/Assets/UnityVS/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
+ <HintPath>C:/Users/pc/Documents/GitHub/ABXTool/unityAES/Assets/UnityVS/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
  </Reference>
  <Reference Include="SyntaxTree.VisualStudio.Unity.Messaging">
- <HintPath>E:/Wrok/unityAES/Assets/UnityVS/Editor/SyntaxTree.VisualStudio.Unity.Messaging.dll</HintPath>
+ <HintPath>C:/Users/pc/Documents/GitHub/ABXTool/unityAES/Assets/UnityVS/Editor/SyntaxTree.VisualStudio.Unity.Messaging.dll</HintPath>
  </Reference>
  <Reference Include="UnityVS.VersionSpecific">
- <HintPath>E:/Wrok/unityAES/Assets/UnityVS/Editor/UnityVS.VersionSpecific.dll</HintPath>
+ <HintPath>C:/Users/pc/Documents/GitHub/ABXTool/unityAES/Assets/UnityVS/Editor/UnityVS.VersionSpecific.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Graphs">
  <HintPath>D:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.Graphs.dll</HintPath>

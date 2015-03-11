@@ -65,8 +65,11 @@
      <Compile Include="Assets\Tools\Player.cs" />
      <Compile Include="Assets\Tools\TestDome.cs" />
      <Compile Include="Assets\Tools\Xml\XmlUtils.cs" />
+     <None Include="Assets\StreamingAssets\player.xml" />
+     <None Include="Assets\StreamingAssets\test.xml" />
      <None Include="Assets\test\test1.xml" />
      <None Include="Assets\Tools\Readme.txt" />
+     <None Include="Assets\StreamingAssets\qqq.assetbundle.xml" />
      <None Include="Assets\Tools\player.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

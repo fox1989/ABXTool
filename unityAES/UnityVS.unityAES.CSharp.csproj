@@ -72,6 +72,9 @@
     <Compile Include="Assets\Tools\Xml\XmlUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\StreamingAssets\player.xml" />
+    <None Include="Assets\StreamingAssets\qqq.assetbundle.xml" />
+    <None Include="Assets\StreamingAssets\test.xml" />
     <None Include="Assets\test\test1.xml" />
     <None Include="Assets\Tools\player.xml" />
     <None Include="Assets\Tools\Readme.txt" />
